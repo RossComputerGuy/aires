@@ -16,7 +16,7 @@ GL3ShaderProgram::GL3ShaderProgram(GraphicsBackend* backend) : ShaderProgram(bac
 	this->prog = createProgram();
 }
 
-GL3ShaderProgram::GL3ShaderProgram(GraphicsBackend* backend, const char* vert, const char* frag, bool compiled) : GL3ShaderProgram(backend) {
+GL3ShaderProgram::GL3ShaderProgram(GraphicsBackend* backend, std::string vert, std::string frag, bool compiled) : GL3ShaderProgram(backend) {
 	char infoLog[512];
 	if (!compiled) {
 		glShaderSource shaderSource = (glShaderSource)backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glShaderSource");
@@ -26,7 +26,10 @@ GL3ShaderProgram::GL3ShaderProgram(GraphicsBackend* backend, const char* vert, c
 
 		int success;
 
-		shaderSource(this->shader_vert, 1, (const GLchar*)&vert, NULL);
+		const char* vertstr = vert.c_str();
+		const char* fragstr = frag.c_str();
+
+		shaderSource(this->shader_vert, 1, (const GLchar*)&vertstr, NULL);
 		compileShader(this->shader_vert);
 		getShaderiv(this->shader_vert, GL_COMPILE_STATUS, &success);
 		if (!success) {
@@ -34,7 +37,7 @@ GL3ShaderProgram::GL3ShaderProgram(GraphicsBackend* backend, const char* vert, c
 			throw std::runtime_error(std::string("Failed to compile vertex shader: ") + infoLog);
 		}
 
-		shaderSource(this->shader_frag, 1, (const GLchar*)&frag, NULL);
+		shaderSource(this->shader_frag, 1, (const GLchar*)&fragstr, NULL);
 		compileShader(this->shader_frag);
 		getShaderiv(this->shader_frag, GL_COMPILE_STATUS, &success);
 		if (!success) {
@@ -116,6 +119,6 @@ ShaderProgram* GL3GraphicsAPI::createShaderProgram() {
 	return new GL3ShaderProgram(this->win->getGraphicsBackend());
 }
 
-ShaderProgram* GL3GraphicsAPI::createShaderProgram(const char* vert, const char* frag, bool compiled) {
+ShaderProgram* GL3GraphicsAPI::createShaderProgram(std::string vert, std::string frag, bool compiled) {
 	return new GL3ShaderProgram(this->win->getGraphicsBackend(), vert, frag, compiled);
 }

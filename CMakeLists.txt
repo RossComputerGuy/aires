@@ -44,13 +44,14 @@ list(APPEND EXTRA_SOURCES "${PROJECT_SOURCE_DIR}/deps/sigslot/src/signal.cpp")
 # Aires
 include_directories("${PROJECT_SOURCE_DIR}/include")
 add_library(aires SHARED "${PROJECT_SOURCE_DIR}/src/graphics/api.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/backend.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/shader.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/window.cpp"
-	${EXTRA_SOURCES})
+	"${PROJECT_SOURCE_DIR}/src/utils/file.cpp" ${EXTRA_SOURCES})
 add_dependencies(aires glm_shared)
 
 # Testing
 
 if(API_GL3)
-	add_executable(gl3-shaders "${PROJECT_SOURCE_DIR}/tests/graphics/gl3/shaders.cpp")
+	add_executable(gl3-shaders "${PROJECT_SOURCE_DIR}/tests/src/graphics/gl3/shaders.cpp")
 	target_link_libraries(gl3-shaders "${PROJECT_BINARY_DIR}/libaires.so" ${GTEST_LIBRARIES})
-	gtest_add_tests(TARGET gl3-shaders SOURCES "${PROJECT_SOURCE_DIR}/tests/graphics/gl3/shaders.cpp")
+	gtest_add_tests(TARGET gl3-shaders SOURCES "${PROJECT_SOURCE_DIR}/tests/src/graphics/gl3/shaders.cpp"
+		WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests")
 endif()

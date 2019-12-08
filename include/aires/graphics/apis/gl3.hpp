@@ -34,7 +34,7 @@ namespace Aires {
 			class GL3ShaderProgram : public ShaderProgram {
 				public:
 					GL3ShaderProgram(GraphicsBackend* backend);
-					GL3ShaderProgram(GraphicsBackend* backend, const char* vert, const char* frag, bool compiled=false);
+					GL3ShaderProgram(GraphicsBackend* backend, std::string vert, std::string frag, bool compiled=false);
 
 					void set(const char* name, int v);
 					void set(const char* name, float v);
@@ -54,7 +54,7 @@ namespace Aires {
 					GL3GraphicsAPI(Window* win);
 
 					ShaderProgram* createShaderProgram();
-					ShaderProgram* createShaderProgram(const char* vert, const char* frag, bool compiled=false);
+					ShaderProgram* createShaderProgram(std::string vert, std::string frag, bool compiled=false);
 			};
 		};
 	};
