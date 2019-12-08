@@ -9,3 +9,7 @@ GraphicsAPI::GraphicsAPI(Window* win) {
 ShaderProgram* GraphicsAPI::createShaderProgram(const char* vert, const char* frag, bool compiled) {
 	return this->createShaderProgram(std::string(vert), std::string(frag), compiled);
 }
+
+Texture* GraphicsAPI::createTexture(uint32_t width, uint32_t height, AIRES_COLOR_FORMAT format) {
+	return this->createTexture(width, height, 0, format);
+}

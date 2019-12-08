@@ -10,4 +10,5 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 *.so
-gl3-shaders
+test-*
+**/include/aires/config.h

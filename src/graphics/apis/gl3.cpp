@@ -4,6 +4,28 @@
 #include <cstring>
 #include <stdexcept>
 
+/** Texture **/
+using namespace Aires::Graphics::Textures;
+
+GL3Texture::GL3Texture(GraphicsBackend* backend, uint32_t width, uint32_t height, AIRES_COLOR_FORMAT format) : GL3Texture(backend, width, height, 0, format) {}
+
+GL3Texture::GL3Texture(GraphicsBackend* backend, uint32_t width, uint32_t height, uint8_t depth, AIRES_COLOR_FORMAT format) : Texture(backend, width, height, depth, format) {
+	_glGenTextures genTextures = (_glGenTextures)backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glGenTextures");
+	_glBindTexture bindTexture = (_glBindTexture)backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glBindTexture");
+
+	genTextures(1, &this->id);
+	bindTexture(depth == 0 ? GL_TEXTURE_2D : GL_TEXTURE_3D, this->id);
+}
+
+void GL3Texture::upload(float* buffer) {
+	_glTexImage2D texImage2D = (_glTexImage2D)backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glTexImage2D");
+	_glTexImage3D texImage3D = (_glTexImage3D)backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glTexImage3D");
+
+	GLenum format = this->getColorFormat() == AIRES_COLOR_RGB ? GL_RGB : GL_RGBA;
+	if (this->getDepth() == 0) texImage2D(GL_TEXTURE_2D, 0, format, this->getWidth(), this->getHeight(), 0, format, GL_FLOAT, buffer);
+	else texImage3D(GL_TEXTURE_3D, 0, format, this->getWidth(), this->getHeight(), this->getDepth(), 0, format, GL_FLOAT, buffer);
+}
+
 /** Shader **/
 using namespace Aires::Graphics::Shaders;
 
@@ -29,7 +51,7 @@ GL3ShaderProgram::GL3ShaderProgram(GraphicsBackend* backend, std::string vert, s
 		const char* vertstr = vert.c_str();
 		const char* fragstr = frag.c_str();
 
-		shaderSource(this->shader_vert, 1, (const GLchar*)&vertstr, NULL);
+		shaderSource(this->shader_vert, 1, (const char*)&vertstr, NULL);
 		compileShader(this->shader_vert);
 		getShaderiv(this->shader_vert, GL_COMPILE_STATUS, &success);
 		if (!success) {
@@ -37,7 +59,7 @@ GL3ShaderProgram::GL3ShaderProgram(GraphicsBackend* backend, std::string vert, s
 			throw std::runtime_error(std::string("Failed to compile vertex shader: ") + infoLog);
 		}
 
-		shaderSource(this->shader_frag, 1, (const GLchar*)&fragstr, NULL);
+		shaderSource(this->shader_frag, 1, (const char*)&fragstr, NULL);
 		compileShader(this->shader_frag);
 		getShaderiv(this->shader_frag, GL_COMPILE_STATUS, &success);
 		if (!success) {
@@ -67,7 +89,7 @@ void GL3ShaderProgram::set(const char* name, int v) {
 	glGetUniformLocation getUniformLocation = (glGetUniformLocation)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glGetUniformLocation");
 	glUniform1i uniform = (glUniform1i)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glUniform1i");
 
-	GLuint loc = getUniformLocation(this->prog, name);
+	unsigned int loc = getUniformLocation(this->prog, name);
 	uniform(loc, v);
 }
 
@@ -75,7 +97,7 @@ void GL3ShaderProgram::set(const char* name, float v) {
 	glGetUniformLocation getUniformLocation = (glGetUniformLocation)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glGetUniformLocation");
 	glUniform1f uniform = (glUniform1f)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glUniform1f");
 
-	GLuint loc = getUniformLocation(this->prog, name);
+	unsigned int loc = getUniformLocation(this->prog, name);
 	uniform(loc, v);
 }
 
@@ -83,24 +105,24 @@ void GL3ShaderProgram::set(const char* name, glm::mat2 v) {
 	glGetUniformLocation getUniformLocation = (glGetUniformLocation)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glGetUniformLocation");
 	glUniformMatrix2f uniform = (glUniformMatrix2f)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glUniformMatrix2f");
 
-	GLuint loc = getUniformLocation(this->prog, name);
-	uniform(loc, 1, GL_FALSE, (const GLfloat*)glm::value_ptr(v));
+	unsigned int loc = getUniformLocation(this->prog, name);
+	uniform(loc, 1, GL_FALSE, (const float*)glm::value_ptr(v));
 }
 
 void GL3ShaderProgram::set(const char* name, glm::mat3 v) {
 	glGetUniformLocation getUniformLocation = (glGetUniformLocation)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glGetUniformLocation");
 	glUniformMatrix3f uniform = (glUniformMatrix3f)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glUniformMatrix3f");
 
-	GLuint loc = getUniformLocation(this->prog, name);
-	uniform(loc, 1, GL_FALSE, (const GLfloat*)glm::value_ptr(v));
+	unsigned int loc = getUniformLocation(this->prog, name);
+	uniform(loc, 1, GL_FALSE, (const float*)glm::value_ptr(v));
 }
 
 void GL3ShaderProgram::set(const char* name, glm::mat4 v) {
 	glGetUniformLocation getUniformLocation = (glGetUniformLocation)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glGetUniformLocation");
 	glUniformMatrix4f uniform = (glUniformMatrix4f)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glUniformMatrix4f");
 
-	GLuint loc = getUniformLocation(this->prog, name);
-	uniform(loc, 1, GL_FALSE, (const GLfloat*)glm::value_ptr(v));
+	unsigned int loc = getUniformLocation(this->prog, name);
+	uniform(loc, 1, GL_FALSE, (const float*)glm::value_ptr(v));
 }
 
 void GL3ShaderProgram::use() {
@@ -121,4 +143,8 @@ ShaderProgram* GL3GraphicsAPI::createShaderProgram() {
 
 ShaderProgram* GL3GraphicsAPI::createShaderProgram(std::string vert, std::string frag, bool compiled) {
 	return new GL3ShaderProgram(this->win->getGraphicsBackend(), vert, frag, compiled);
+}
+
+Texture* GL3GraphicsAPI::createTexture(uint32_t width, uint32_t height, uint8_t depth, AIRES_COLOR_FORMAT format) {
+	return new GL3Texture(this->win->getGraphicsBackend(), width, height, depth, format);
 }

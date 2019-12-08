@@ -1,6 +1,8 @@
 #pragma once
 
 #include <aires/graphics/api.hpp>
+#include <aires/graphics/color.hpp>
+#include <aires/graphics/texture.hpp>
 #include <aires/graphics/shader.hpp>
 #include <GL/gl.h>
 
@@ -27,9 +29,24 @@ typedef void (*glUniformMatrix3f)(GLint, GLsizei, GLboolean, const GLfloat* valu
 typedef void (*glUniformMatrix4f)(GLint, GLsizei, GLboolean, const GLfloat* value);
 typedef GLuint (*glGetUniformLocation)(GLuint, const GLchar*);
 typedef void (*glUseProgram)(GLuint);
+typedef void (*_glGenTextures)(GLsizei, GLuint*);
+typedef void (*_glBindTexture)(GLenum, GLuint);
+typedef void (*_glTexImage2D)(GLenum, GLint, GLint, GLsizei, GLsizei, GLint, GLenum, GLenum, const GLvoid*);
+typedef void (*_glTexImage3D)(GLenum, GLint, GLint, GLsizei, GLsizei, GLsizei, GLint, GLenum, GLenum, const GLvoid*);
 
 namespace Aires {
 	namespace Graphics {
+		namespace Textures {
+			class GL3Texture : public Texture {
+				public:
+					GL3Texture(GraphicsBackend* backend, uint32_t width, uint32_t height, AIRES_COLOR_FORMAT format=AIRES_COLOR_RGB);
+					GL3Texture(GraphicsBackend* backend, uint32_t width, uint32_t height, uint8_t depth, AIRES_COLOR_FORMAT format=AIRES_COLOR_RGB);
+
+					void upload(float* buffer);
+				private:
+					GLuint id;
+			};
+		};
 		namespace Shaders {
 			class GL3ShaderProgram : public ShaderProgram {
 				public:
@@ -55,6 +72,8 @@ namespace Aires {
 
 					ShaderProgram* createShaderProgram();
 					ShaderProgram* createShaderProgram(std::string vert, std::string frag, bool compiled=false);
+
+					Texture* createTexture(uint32_t width, uint32_t height, uint8_t depth, AIRES_COLOR_FORMAT format=AIRES_COLOR_RGB);
 			};
 		};
 	};

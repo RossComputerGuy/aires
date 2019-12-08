@@ -1,0 +1,6 @@
+#pragma once
+
+#cmakedefine AIRES_API_GL3
+#cmakedefine AIRES_BACKEND_GLFW
+
+#define AIRES_VERSION "@AIRES_VERSION@"
