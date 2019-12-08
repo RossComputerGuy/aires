@@ -49,6 +49,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include" "${PROJECT_BINARY_DIR}/inclu
 add_library(aires SHARED
 ## Graphics
 	"${PROJECT_SOURCE_DIR}/src/graphics/api.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/backend.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/texture.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/shader.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/window.cpp"
+	"${PROJECT_SOURCE_DIR}/src/graphics/vertex.cpp"
 ## Utils
 	"${PROJECT_SOURCE_DIR}/src/utils/file.cpp"
 ## Main
@@ -61,16 +62,22 @@ add_dependencies(aires glm_shared)
 
 if(ENABLE_TESTING)
 	if(AIRES_API_GL3)
-		add_executable(test-gl3-textures "${PROJECT_SOURCE_DIR}/tests/src/graphics/gl3/textures.cpp")
-		add_dependencies(test-gl3-textures aires)
-		target_link_libraries(test-gl3-textures "${PROJECT_BINARY_DIR}/libaires.so" ${GTEST_LIBRARIES})
-		gtest_add_tests(TARGET test-gl3-textures SOURCES "${PROJECT_SOURCE_DIR}/tests/src/graphics/gl3/textures.cpp"
+		add_executable(test-gl3-rendering "${PROJECT_SOURCE_DIR}/tests/src/graphics/gl3/rendering.cpp")
+		add_dependencies(test-gl3-rendering aires)
+		target_link_libraries(test-gl3-rendering "${PROJECT_BINARY_DIR}/libaires.so" ${GTEST_LIBRARIES})
+		gtest_add_tests(TARGET test-gl3-rendering SOURCES "${PROJECT_SOURCE_DIR}/tests/src/graphics/gl3/rendering.cpp"
 			WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests")
 
 		add_executable(test-gl3-shaders "${PROJECT_SOURCE_DIR}/tests/src/graphics/gl3/shaders.cpp")
 		add_dependencies(test-gl3-shaders aires)
 		target_link_libraries(test-gl3-shaders "${PROJECT_BINARY_DIR}/libaires.so" ${GTEST_LIBRARIES})
 		gtest_add_tests(TARGET test-gl3-shaders SOURCES "${PROJECT_SOURCE_DIR}/tests/src/graphics/gl3/shaders.cpp"
+			WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests")
+
+		add_executable(test-gl3-textures "${PROJECT_SOURCE_DIR}/tests/src/graphics/gl3/textures.cpp")
+		add_dependencies(test-gl3-textures aires)
+		target_link_libraries(test-gl3-textures "${PROJECT_BINARY_DIR}/libaires.so" ${GTEST_LIBRARIES})
+		gtest_add_tests(TARGET test-gl3-textures SOURCES "${PROJECT_SOURCE_DIR}/tests/src/graphics/gl3/textures.cpp"
 			WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests")
 	endif()
 endif()

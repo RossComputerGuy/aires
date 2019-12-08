@@ -48,6 +48,13 @@ void GLFWWindow::setPosition(uint32_t x, uint32_t y) {
 	glfwSetWindowPos(this->_win, x, y);
 }
 
+void GLFWWindow::render(std::function<void()> cb) {
+	glfwMakeContextCurrent(this->_win);
+	cb();
+	glfwSwapBuffers(this->_win);
+	glfwPollEvents();
+}
+
 /** Backend **/
 using namespace Aires::Graphics;
 using namespace Aires::Graphics::Backends;

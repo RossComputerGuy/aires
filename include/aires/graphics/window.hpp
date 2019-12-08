@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdbool>
+#include <functional>
 #include <signal.h>
 #include <stdint.h>
 
@@ -25,6 +26,8 @@ namespace Aires {
 				virtual uint32_t getYPosition() = 0;
 
 				virtual void setPosition(uint32_t x, uint32_t y) = 0;
+
+				virtual void render(std::function<void()> cb) = 0;
 			protected:
 				GraphicsBackend* backend;
 		};

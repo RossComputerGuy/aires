@@ -3,6 +3,7 @@
 #include <aires/graphics/backend.hpp>
 #include <GLFW/glfw3.h>
 #include <list>
+#include <functional>
 
 namespace Aires {
 	namespace Graphics {
@@ -21,7 +22,9 @@ namespace Aires {
 					uint32_t getXPosition();
 					uint32_t getYPosition();
 
-					void setPosition(uint32_t x, uint32_t y);	
+					void setPosition(uint32_t x, uint32_t y);
+
+					void render(std::function<void()> cb);
 				private:
 					GLFWwindow* _win;
 					char* title;

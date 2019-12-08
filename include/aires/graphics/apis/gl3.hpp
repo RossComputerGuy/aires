@@ -33,6 +33,8 @@ typedef void (*_glGenTextures)(GLsizei, GLuint*);
 typedef void (*_glBindTexture)(GLenum, GLuint);
 typedef void (*_glTexImage2D)(GLenum, GLint, GLint, GLsizei, GLsizei, GLint, GLenum, GLenum, const GLvoid*);
 typedef void (*_glTexImage3D)(GLenum, GLint, GLint, GLsizei, GLsizei, GLsizei, GLint, GLenum, GLenum, const GLvoid*);
+typedef void (*_glClear)(GLbitfield);
+typedef void (*_glClearColor)(GLclampf, GLclampf, GLclampf, GLclampf);
 
 namespace Aires {
 	namespace Graphics {
@@ -74,6 +76,7 @@ namespace Aires {
 					ShaderProgram* createShaderProgram(std::string vert, std::string frag, bool compiled=false);
 
 					Texture* createTexture(uint32_t width, uint32_t height, uint8_t depth, AIRES_COLOR_FORMAT format=AIRES_COLOR_RGB);
+					void render(std::function<void()> cb);
 			};
 		};
 	};

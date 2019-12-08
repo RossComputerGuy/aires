@@ -148,3 +148,14 @@ ShaderProgram* GL3GraphicsAPI::createShaderProgram(std::string vert, std::string
 Texture* GL3GraphicsAPI::createTexture(uint32_t width, uint32_t height, uint8_t depth, AIRES_COLOR_FORMAT format) {
 	return new GL3Texture(this->win->getGraphicsBackend(), width, height, depth, format);
 }
+
+void GL3GraphicsAPI::render(std::function<void()> cb) {
+	this->win->render([ this, cb ] () {
+		_glClear clear = (_glClear)this->win->getGraphicsBackend()->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glClear");
+		_glClearColor clearColor = (_glClearColor)this->win->getGraphicsBackend()->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glClearColor");
+
+		clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		clearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		cb();
+	});
+}
