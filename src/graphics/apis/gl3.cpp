@@ -7,19 +7,33 @@
 /** Texture **/
 using namespace Aires::Graphics::Textures;
 
-GL3Texture::GL3Texture(GraphicsBackend* backend, uint32_t width, uint32_t height, AIRES_COLOR_FORMAT format) : GL3Texture(backend, width, height, 0, format) {}
+GL3Texture::GL3Texture(GraphicsBackend* backend, GLenum index, uint32_t width, uint32_t height, AIRES_COLOR_FORMAT format) : GL3Texture(backend, index, width, height, 0, format) {}
 
-GL3Texture::GL3Texture(GraphicsBackend* backend, uint32_t width, uint32_t height, uint8_t depth, AIRES_COLOR_FORMAT format) : Texture(backend, width, height, depth, format) {
+GL3Texture::GL3Texture(GraphicsBackend* backend, GLenum index, uint32_t width, uint32_t height, uint8_t depth, AIRES_COLOR_FORMAT format) : Texture(backend, width, height, depth, format) {
+	_glActivateTexture activateTexture = (_glActivateTexture)backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glActivateTexture");
 	_glGenTextures genTextures = (_glGenTextures)backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glGenTextures");
 	_glBindTexture bindTexture = (_glBindTexture)backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glBindTexture");
+	_glTexParameteri texParamI = (_glTexParameteri)backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glTexParameteri");
 
+	this->index = index;
+
+	activateTexture(this->index);
 	genTextures(1, &this->id);
 	bindTexture(depth == 0 ? GL_TEXTURE_2D : GL_TEXTURE_3D, this->id);
+	texParamI(depth == 0 ? GL_TEXTURE_2D : GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	texParamI(depth == 0 ? GL_TEXTURE_2D : GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	texParamI(depth == 0 ? GL_TEXTURE_2D : GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	texParamI(depth == 0 ? GL_TEXTURE_2D : GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+}
+
+GL3Texture::~GL3Texture() {
+	_glDeleteTextures deleteTextures = (_glDeleteTextures)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glDeleteTextures");
+	deleteTextures(1, &this->id);
 }
 
 void GL3Texture::upload(float* buffer) {
-	_glTexImage2D texImage2D = (_glTexImage2D)backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glTexImage2D");
-	_glTexImage3D texImage3D = (_glTexImage3D)backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glTexImage3D");
+	_glTexImage2D texImage2D = (_glTexImage2D)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glTexImage2D");
+	_glTexImage3D texImage3D = (_glTexImage3D)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glTexImage3D");
 
 	GLenum format = this->getColorFormat() == AIRES_COLOR_RGB ? GL_RGB : GL_RGBA;
 	if (this->getDepth() == 0) texImage2D(GL_TEXTURE_2D, 0, format, this->getWidth(), this->getHeight(), 0, format, GL_FLOAT, buffer);
@@ -146,7 +160,9 @@ ShaderProgram* GL3GraphicsAPI::createShaderProgram(std::string vert, std::string
 }
 
 Texture* GL3GraphicsAPI::createTexture(uint32_t width, uint32_t height, uint8_t depth, AIRES_COLOR_FORMAT format) {
-	return new GL3Texture(this->win->getGraphicsBackend(), width, height, depth, format);
+	GL3Texture* tex = new GL3Texture(this->win->getGraphicsBackend(), GL_TEXTURE0 + this->textures.size(), width, height, depth, format);
+	this->textures.push_back(tex);
+	return tex;
 }
 
 void GL3GraphicsAPI::render(std::function<void()> cb) {

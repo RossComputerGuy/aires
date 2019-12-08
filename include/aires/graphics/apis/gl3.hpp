@@ -35,18 +35,24 @@ typedef void (*_glTexImage2D)(GLenum, GLint, GLint, GLsizei, GLsizei, GLint, GLe
 typedef void (*_glTexImage3D)(GLenum, GLint, GLint, GLsizei, GLsizei, GLsizei, GLint, GLenum, GLenum, const GLvoid*);
 typedef void (*_glClear)(GLbitfield);
 typedef void (*_glClearColor)(GLclampf, GLclampf, GLclampf, GLclampf);
+typedef void (*_glActivateTexture)(GLenum);
+typedef void (*_glTexParameterf)(GLenum, GLenum, GLfloat);
+typedef void (*_glTexParameteri)(GLenum, GLenum, GLint);
+typedef void (*_glDeleteTextures)(GLsizei, const GLuint*);
 
 namespace Aires {
 	namespace Graphics {
 		namespace Textures {
 			class GL3Texture : public Texture {
 				public:
-					GL3Texture(GraphicsBackend* backend, uint32_t width, uint32_t height, AIRES_COLOR_FORMAT format=AIRES_COLOR_RGB);
-					GL3Texture(GraphicsBackend* backend, uint32_t width, uint32_t height, uint8_t depth, AIRES_COLOR_FORMAT format=AIRES_COLOR_RGB);
+					GL3Texture(GraphicsBackend* backend, GLenum index, uint32_t width, uint32_t height, AIRES_COLOR_FORMAT format=AIRES_COLOR_RGB);
+					GL3Texture(GraphicsBackend* backend, GLenum index, uint32_t width, uint32_t height, uint8_t depth, AIRES_COLOR_FORMAT format=AIRES_COLOR_RGB);
+					~GL3Texture();
 
 					void upload(float* buffer);
 				private:
 					GLuint id;
+					GLenum index;
 			};
 		};
 		namespace Shaders {
@@ -77,6 +83,8 @@ namespace Aires {
 
 					Texture* createTexture(uint32_t width, uint32_t height, uint8_t depth, AIRES_COLOR_FORMAT format=AIRES_COLOR_RGB);
 					void render(std::function<void()> cb);
+				private:
+					std::list<Aires::Graphics::Textures::GL3Texture*> textures;
 			};
 		};
 	};
