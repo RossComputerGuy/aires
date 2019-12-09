@@ -11,10 +11,12 @@ namespace Aires {
 				Vertex(glm::vec3 pos);
 				Vertex(glm::vec3 pos, glm::vec4 color);
 				Vertex(glm::vec3 pos, glm::vec4 color, glm::vec3 texture_cord);
+				Vertex(glm::vec3 pos, glm::vec4 color, glm::vec3 texture_cord, int next);
 
 				glm::vec3 pos;
 				glm::vec4 color;
 				glm::vec3 texture_cord;
+				int next;
 
 				float &operator[](int i) {
 					if (i >= 0 && i < 3) return this->pos[i];
@@ -24,6 +26,8 @@ namespace Aires {
 				}
 
 				float* array();
+
+				Vertex clone();
 		};
 	};
 };

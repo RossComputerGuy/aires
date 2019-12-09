@@ -2,8 +2,9 @@
 
 #include <aires/graphics/api.hpp>
 #include <aires/graphics/color.hpp>
-#include <aires/graphics/texture.hpp>
+#include <aires/graphics/object.hpp>
 #include <aires/graphics/shader.hpp>
+#include <aires/graphics/texture.hpp>
 #include <GL/gl.h>
 
 typedef GLuint (*glCreateShader)(GLenum);
@@ -39,9 +40,35 @@ typedef void (*_glActivateTexture)(GLenum);
 typedef void (*_glTexParameterf)(GLenum, GLenum, GLfloat);
 typedef void (*_glTexParameteri)(GLenum, GLenum, GLint);
 typedef void (*_glDeleteTextures)(GLsizei, const GLuint*);
+typedef void (*_glGenVertexArrays)(GLsizei, GLuint*);
+typedef void (*_glBindVertexArray)(GLuint);
+typedef void (*_glDeleteVertexArrays)(GLsizei, const GLuint*);
+typedef void (*_glGenBuffers)(GLsizei, GLuint*);
+typedef void (*_glDeleteBuffers)(GLsizei, const GLuint*);
+typedef void (*_glVertexAttribPointer)(GLuint, GLint, GLenum, GLboolean, GLsizei, const void*);
+typedef void (*_glEnableVertexAttribArray)(GLuint);
+typedef void (*_glDisableVertexAttribArray)(GLuint);
+typedef GLint (*_glGetAttribLocation)(GLuint, const GLchar*);
+typedef void (*_glDrawElements)(GLenum, GLsizei, GLenum, const void*);
 
 namespace Aires {
 	namespace Graphics {
+		namespace GraphicsObjects {
+			class GL3GraphicsObject : public GraphicsObject {
+				public:
+					GL3GraphicsObject(GraphicsBackend* backend, glm::vec3 pos);
+					~GL3GraphicsObject();
+
+					void update();
+					void render();
+				protected:
+					void loadShaders(ShaderProgram* shaderProgram);
+				private:
+					GLuint vao;
+					GLuint vbo;
+					GLuint ebo;
+			};
+		};
 		namespace Textures {
 			class GL3Texture : public Texture {
 				public:
@@ -67,6 +94,8 @@ namespace Aires {
 					void set(const char* name, glm::mat3 v);
 					void set(const char* name, glm::mat4 v);
 					void use();
+
+					GLuint getID();
 				private:
 					int prog;
 					int shader_vert;

@@ -4,6 +4,60 @@
 #include <cstring>
 #include <stdexcept>
 
+/** GraphicsObject **/
+using namespace Aires::Graphics::GraphicsObjects;
+using namespace Aires::Graphics::Shaders;
+
+GL3GraphicsObject::GL3GraphicsObject(GraphicsBackend* backend, glm::vec3 pos) : GraphicsObject(backend, pos) {
+	_glGenVertexArrays genVertexArrays = (_glGenVertexArrays)backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glGenVertexArrays");
+	_glGenBuffers genBuffers = (_glGenBuffers)backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glGenBuffers");
+
+	genVertexArrays(1, &this->vao);
+	genBuffers(1, &this->vbo);
+	genBuffers(1, &this->ebo);
+}
+
+GL3GraphicsObject::~GL3GraphicsObject() {
+	_glDeleteBuffers deleteBuffers = (_glDeleteBuffers)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glDeleteBuffers");
+	_glDeleteVertexArrays deleteVertexArrays = (_glDeleteVertexArrays)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glDeleteVertexArrays");
+
+	deleteBuffers(1, &this->ebo);
+	deleteBuffers(1, &this->vbo);
+	deleteVertexArrays(1, &this->vao);
+}
+
+void GL3GraphicsObject::update() {}
+
+void GL3GraphicsObject::render() {
+	_glDrawElements drawElements = (_glDrawElements)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glDrawElements");
+
+	if (this->shaderProgram != NULL && this->shaderProgram != nullptr) this->shaderProgram->use();
+	drawElements(GL_TRIANGLES, this->elements.size(), GL_UNSIGNED_INT, 0);
+}
+
+void GL3GraphicsObject::loadShaders(ShaderProgram* shaderProgram) {
+	GL3ShaderProgram* glShader = reinterpret_cast<GL3ShaderProgram*>(shaderProgram);
+	GLuint shader = glShader->getID();
+
+	_glGetAttribLocation getAttribLoc = (_glGetAttribLocation)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glGetAttribLocation");
+	_glEnableVertexAttribArray enableVertexAttribArray = (_glEnableVertexAttribArray)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glEnableVertexAttribArray");
+	_glVertexAttribPointer vertexAttribPointer = (_glVertexAttribPointer)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glVertexAttribPointer");
+
+	glShader->use();
+
+	GLint attrPos = getAttribLoc(shader, "position");
+	enableVertexAttribArray(attrPos);
+	vertexAttribPointer(attrPos, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), 0);
+
+	GLint attrColor = getAttribLoc(shader, "color");
+	enableVertexAttribArray(attrColor);
+	vertexAttribPointer(attrColor, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+
+	GLint attrTexCord = getAttribLoc(shader, "texCord");
+	enableVertexAttribArray(attrTexCord);
+	vertexAttribPointer(attrTexCord, 8, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), (void*)(7 * sizeof(GLfloat)));
+}
+
 /** Texture **/
 using namespace Aires::Graphics::Textures;
 
@@ -41,8 +95,6 @@ void GL3Texture::upload(float* buffer) {
 }
 
 /** Shader **/
-using namespace Aires::Graphics::Shaders;
-
 GL3ShaderProgram::GL3ShaderProgram(GraphicsBackend* backend) : ShaderProgram(backend) {
 	glCreateShader createShader = (glCreateShader)backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glCreateShader");
 	glCreateProgram createProgram = (glCreateProgram)backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glCreateProgram");
@@ -142,6 +194,10 @@ void GL3ShaderProgram::set(const char* name, glm::mat4 v) {
 void GL3ShaderProgram::use() {
 	glUseProgram useProgram = (glUseProgram)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glUseProgram");
 	useProgram(this->prog);
+}
+
+GLuint GL3ShaderProgram::getID() {
+	return this->prog;
 }
 
 /** API **/
