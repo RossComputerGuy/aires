@@ -12,14 +12,14 @@ void GraphicsObject::setShaderProgram(ShaderProgram* shaderProgram) {
 	this->loadShaders(this->shaderProgram);
 }
 
-int* GraphicsObject::getElementsArray() {
-	int* elems = new int[this->elements.size()];
+unsigned int* GraphicsObject::getElementsArray() {
+	unsigned int* elems = new unsigned int[this->elements.size()];
 	size_t i = 0;
 	for (auto it = this->elements.begin(); it != this->elements.end(); it++) elems[i++] = *it;
 	return elems;
 }
 
-float* GraphicsObject::getVerticiesArray() {
+float* GraphicsObject::getVerticesArray() {
 	float* elems = new float[this->vertices.size() * 10];
 	size_t i = 0;
 	for (auto it = this->vertices.begin(); it != this->vertices.end(); it++) {

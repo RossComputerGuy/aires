@@ -50,6 +50,8 @@ typedef void (*_glEnableVertexAttribArray)(GLuint);
 typedef void (*_glDisableVertexAttribArray)(GLuint);
 typedef GLint (*_glGetAttribLocation)(GLuint, const GLchar*);
 typedef void (*_glDrawElements)(GLenum, GLsizei, GLenum, const void*);
+typedef void (*_glBindBuffer)(GLenum, GLuint);
+typedef void (*_glBufferData)(GLenum, GLsizeiptr, const void*, GLenum);
 
 namespace Aires {
 	namespace Graphics {

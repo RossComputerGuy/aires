@@ -26,7 +26,18 @@ GL3GraphicsObject::~GL3GraphicsObject() {
 	deleteVertexArrays(1, &this->vao);
 }
 
-void GL3GraphicsObject::update() {}
+void GL3GraphicsObject::update() {
+	_glBindBuffer bindBuffer = (_glBindBuffer)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glBindBuffer");
+	_glBufferData bufferData = (_glBufferData)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glBufferData");
+
+	GLfloat* verts = this->getVerticesArray();
+	bindBuffer(GL_ARRAY_BUFFER, this->vbo);
+	bufferData(GL_ARRAY_BUFFER, this->vertices.size(), verts, GL_STATIC_DRAW);
+
+	GLuint* elems = this->getElementsArray();
+	bindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ebo);
+	bufferData(GL_ELEMENT_ARRAY_BUFFER, this->elements.size(), elems, GL_STATIC_DRAW);
+}
 
 void GL3GraphicsObject::render() {
 	_glDrawElements drawElements = (_glDrawElements)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glDrawElements");

@@ -13,14 +13,14 @@ namespace Aires {
 
 				glm::vec3 pos;
 				std::list<Vertex> vertices;
-				std::list<int> elements;
+				std::list<unsigned int> elements;
 
 				virtual void update() = 0;
 				virtual void render() = 0;
 
 				void setShaderProgram(ShaderProgram* shaderProgram);
-				int* getElementsArray();
-				float* getVerticiesArray();
+				unsigned int* getElementsArray();
+				float* getVerticesArray();
 			protected:
 				ShaderProgram* shaderProgram;
 				GraphicsBackend* backend;
