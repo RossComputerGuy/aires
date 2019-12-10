@@ -13,3 +13,7 @@ ShaderProgram* GraphicsAPI::createShaderProgram(const char* vert, const char* fr
 Texture* GraphicsAPI::createTexture(uint32_t width, uint32_t height, AIRES_COLOR_FORMAT format) {
 	return this->createTexture(width, height, 0, format);
 }
+
+GraphicsObject* GraphicsAPI::createObject() {
+	return this->createObject(glm::vec3(0.0f, 0.0f, 0.0f));
+}

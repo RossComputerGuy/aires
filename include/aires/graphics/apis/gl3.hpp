@@ -112,6 +112,8 @@ namespace Aires {
 					ShaderProgram* createShaderProgram();
 					ShaderProgram* createShaderProgram(std::string vert, std::string frag, bool compiled=false);
 
+					GraphicsObject* createObject(glm::vec3 pos);
+
 					Texture* createTexture(uint32_t width, uint32_t height, uint8_t depth, AIRES_COLOR_FORMAT format=AIRES_COLOR_RGB);
 					void render(std::function<void()> cb);
 				private:

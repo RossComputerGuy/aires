@@ -1,9 +1,12 @@
 #pragma once
 
-#include <aires/graphics/api.hpp>
 #include <aires/graphics/window.hpp>
 #include <cstdbool>
 #include <signal.h>
+
+typedef enum {
+	AIRES_GRAPHICS_API_GL3 = 1
+} AIRES_GRAPHICS_API;
 
 namespace Aires {
 	namespace Graphics {

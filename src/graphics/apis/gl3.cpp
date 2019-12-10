@@ -226,6 +226,10 @@ ShaderProgram* GL3GraphicsAPI::createShaderProgram(std::string vert, std::string
 	return new GL3ShaderProgram(this->win->getGraphicsBackend(), vert, frag, compiled);
 }
 
+GraphicsObject* GL3GraphicsAPI::createObject(glm::vec3 pos) {
+	return new GL3GraphicsObject(this->win->getGraphicsBackend(), pos);
+}
+
 Texture* GL3GraphicsAPI::createTexture(uint32_t width, uint32_t height, uint8_t depth, AIRES_COLOR_FORMAT format) {
 	GL3Texture* tex = new GL3Texture(this->win->getGraphicsBackend(), GL_TEXTURE0 + this->textures.size(), width, height, depth, format);
 	this->textures.push_back(tex);

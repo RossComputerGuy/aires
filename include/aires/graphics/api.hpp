@@ -1,14 +1,11 @@
 #pragma once
 
+#include <aires/graphics/object.hpp>
 #include <aires/graphics/texture.hpp>
 #include <aires/graphics/shader.hpp>
 #include <aires/graphics/window.hpp>
 #include <functional>
 #include <string>
-
-typedef enum {
-	AIRES_GRAPHICS_API_GL3 = 1
-} AIRES_GRAPHICS_API;
 
 namespace Aires {
 	namespace Graphics {
@@ -22,6 +19,9 @@ namespace Aires {
 
 				virtual Texture* createTexture(uint32_t width, uint32_t height, uint8_t depth, AIRES_COLOR_FORMAT format=AIRES_COLOR_RGB) = 0;
 				Texture* createTexture(uint32_t width, uint32_t height, AIRES_COLOR_FORMAT format=AIRES_COLOR_RGB);
+
+				virtual GraphicsObject* createObject(glm::vec3 pos) = 0;
+				GraphicsObject* createObject();
 
 				virtual void render(std::function<void()> cb) = 0;
 			protected:

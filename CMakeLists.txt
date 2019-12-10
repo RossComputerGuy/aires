@@ -63,6 +63,12 @@ add_dependencies(aires glm_shared)
 
 if(ENABLE_TESTING)
 	if(AIRES_API_GL3)
+		add_executable(test-gl3-graphics-object "${PROJECT_SOURCE_DIR}/tests/src/graphics/gl3/graphics-object.cpp")
+		add_dependencies(test-gl3-graphics-object aires)
+		target_link_libraries(test-gl3-graphics-object "${PROJECT_BINARY_DIR}/libaires.so" ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+		gtest_add_tests(TARGET test-gl3-graphics-object SOURCES "${PROJECT_SOURCE_DIR}/tests/src/graphics/gl3/graphics-object.cpp"
+			WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests")
+		
 		add_executable(test-gl3-rendering "${PROJECT_SOURCE_DIR}/tests/src/graphics/gl3/rendering.cpp")
 		add_dependencies(test-gl3-rendering aires)
 		target_link_libraries(test-gl3-rendering "${PROJECT_BINARY_DIR}/libaires.so" ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
