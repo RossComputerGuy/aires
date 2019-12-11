@@ -1,7 +1,9 @@
 #include <aires/graphics.hpp>
+#include <aires/utils/file.hpp>
 #include <gtest/gtest.h>
 
 using namespace Aires::Graphics;
+using namespace Aires::Utils;
 using namespace testing;
 
 TEST(AiresGL3, graphicsObject) {
@@ -9,6 +11,8 @@ TEST(AiresGL3, graphicsObject) {
 	Window* win = backend->createWindow(640, 480, "Rendering test");
 	GraphicsAPI* gfx = createGraphicsAPI(win);
 	GraphicsObject* obj = gfx->createObject();
+	obj->setShaderProgram(gfx->createShaderProgram(FileUtils::readFile("assets/shaders/gl3/test-vert.glsl"), FileUtils::readFile("assets/shaders/gl3/test-frag.glsl")));
+	obj->vertices.push_back(Vertex(glm::vec3(0.0f, 0.0f, 0.5f), glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
 	gfx->render([ & ] () {
 		obj->render();
 	});
