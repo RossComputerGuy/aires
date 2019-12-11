@@ -12,7 +12,19 @@ TEST(AiresGL3, graphicsObject) {
 	GraphicsAPI* gfx = createGraphicsAPI(win);
 	GraphicsObject* obj = gfx->createObject();
 	obj->setShaderProgram(gfx->createShaderProgram(FileUtils::readFile("assets/shaders/gl3/test-vert.glsl"), FileUtils::readFile("assets/shaders/gl3/test-frag.glsl")));
-	obj->vertices.push_back(Vertex(glm::vec3(0.0f, 0.0f, 0.5f), glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
+	obj->vertices.push_back(Vertex(glm::vec3(0.0f, -0.5f, 0.5f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)));
+	obj->vertices.push_back(Vertex(glm::vec3(0.0f, 0.5f, 0.5f), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f)));
+	obj->vertices.push_back(Vertex(glm::vec3(0.0f, 0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)));
+	obj->vertices.push_back(Vertex(glm::vec3(0.0f, 0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)));
+	obj->vertices.push_back(Vertex(glm::vec3(0.0f, -0.5f, -0.5f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)));
+	obj->vertices.push_back(Vertex(glm::vec3(0.0f, -0.5f, 0.5f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)));
+	obj->elements.push_back(0);
+	obj->elements.push_back(1);
+	obj->elements.push_back(2);
+	obj->elements.push_back(2);
+	obj->elements.push_back(3);
+	obj->elements.push_back(0);
+	obj->update();
 	gfx->render([ & ] () {
 		obj->render();
 	});
