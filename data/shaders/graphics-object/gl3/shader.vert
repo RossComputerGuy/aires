@@ -2,9 +2,9 @@
 
 in vec3 position;
 in vec4 color;
-in vec2 texcoord;
+in vec3 texcoord;
 
-out vec3 Color;
+out vec4 Color;
 out vec3 Texcoord;
 
 uniform mat4 camera;

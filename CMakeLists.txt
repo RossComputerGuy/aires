@@ -6,6 +6,34 @@ project(aires VERSION "${AIRES_VERSION}" LANGUAGES CXX)
 option(AIRES_API_GL3 "Enable OpenGL 3.0 support" ON)
 option(AIRES_BACKEND_GLFW "Enable the GLFW backend" ON)
 option(ENABLE_TESTING "Enable tests" ON)
+option(COMPILE_SHADERS "Compile the GLSL shaders" ON)
+
+# Functions
+include(CMakeParseArguments)
+
+if(COMPILE_SHADERS)
+	find_program(GLSLC glslc)
+	function(add_glsl)
+		set(options_ova TARGET)
+		set(options_mva SOURCES)
+		cmake_parse_arguments(PARSED_ARGS "" ${options_ova} ${options_mva} ${ARGN})
+		if(NOT PARSED_ARGS_TARGET)
+			message(FATAL_ERROR "Target name is required")
+		endif()
+		foreach(src IN LISTS PARSED_ARGS_SOURCES)
+			string(REPLACE "${PROJECT_SOURCE_DIR}/" "" out1 "${src}")
+			set(out "${PROJECT_BINARY_DIR}/CMakeFiles/${PARSED_ARGS_TARGET}.dir/${out1}.spv")
+			get_filename_component(dir ${out} DIRECTORY)
+			execute_process(COMMAND mkdir -p ${dir})
+			add_custom_command(OUTPUT "${out}"
+				COMMAND ${GLSLC} -c ${COMPILE_OPTIONS} -o "${out}" "${src}"
+				SOURCE "${src}"
+				COMMENT "Building GLSL object ${out1}")
+			list(APPEND sources "${out}")
+		endforeach()
+		add_custom_target(${PARSED_ARGS_TARGET} ALL DEPENDS ${sources})
+	endfunction()
+endif()
 
 ## Dependencies
 find_package(PkgConfig)
@@ -33,6 +61,14 @@ if(AIRES_API_GL3)
 	include_directories(${OPENGL_INCLUDE_DIR})
 	link_libraries(${OPENGL_LIBRARIES})
 	list(APPEND EXTRA_SOURCES "${PROJECT_SOURCE_DIR}/src/graphics/apis/gl3.cpp")
+	set(COMPILE_OPTIONS --target-env=opengl_compat -fauto-map-locations)
+	if(COMPILE_SHADERS)
+		add_glsl(TARGET gl3-shaders
+			SOURCES ${PROJECT_SOURCE_DIR}/data/shaders/graphics-object/gl3/texture2d.frag
+			${PROJECT_SOURCE_DIR}/data/shaders/graphics-object/gl3/texture3d.frag
+			${PROJECT_SOURCE_DIR}/data/shaders/graphics-object/gl3/untextured.frag
+			${PROJECT_SOURCE_DIR}/data/shaders/graphics-object/gl3/shader.vert)
+	endif()
 endif()
 
 ## GLM
