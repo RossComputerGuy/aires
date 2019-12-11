@@ -39,11 +39,9 @@ void GL3GraphicsObject::update() {
 	this->_elems = this->getElementsArray();
 	bindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ebo);
 	bufferData(GL_ELEMENT_ARRAY_BUFFER, this->elements.size(), this->_elems, GL_STATIC_DRAW);
-
-	if (this->shaderProgram != NULL && this->shaderProgram != nullptr) this->shaderProgram->set("transform", this->transform);
 }
 
-void GL3GraphicsObject::render() {
+void GL3GraphicsObject::render(Camera* cam) {
 	_glBindBuffer bindBuffer = (_glBindBuffer)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glBindBuffer");
 	_glDrawElements drawElements = (_glDrawElements)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glDrawElements");
 	_glBindVertexArray bindVertexArray = (_glBindVertexArray)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glBindVertexArray");
@@ -51,7 +49,11 @@ void GL3GraphicsObject::render() {
 	bindVertexArray(this->vao);
 	bindBuffer(GL_ARRAY_BUFFER, this->vbo);
 	bindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ebo);
-	if (this->shaderProgram != NULL && this->shaderProgram != nullptr) this->shaderProgram->use();
+	if (this->shaderProgram != NULL && this->shaderProgram != nullptr) {
+		this->shaderProgram->set("transform", this->transform);
+		this->shaderProgram->set("camera", cam == nullptr ? glm::mat4(0.0f) : cam->calc());
+		this->shaderProgram->use();
+	}
 	drawElements(GL_TRIANGLES, this->elements.size(), GL_UNSIGNED_INT, 0);
 }
 
@@ -73,7 +75,7 @@ void GL3GraphicsObject::loadShaders(ShaderProgram* shaderProgram) {
 	enableVertexAttribArray(attrColor);
 	vertexAttribPointer(attrColor, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
 
-	GLint attrTexCord = getAttribLoc(shader, "texCord");
+	GLint attrTexCord = getAttribLoc(shader, "texcoord");
 	enableVertexAttribArray(attrTexCord);
 	vertexAttribPointer(attrTexCord, 8, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), (void*)(7 * sizeof(GLfloat)));
 }

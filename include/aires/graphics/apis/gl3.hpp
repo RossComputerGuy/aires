@@ -1,6 +1,7 @@
 #pragma once
 
 #include <aires/graphics/api.hpp>
+#include <aires/graphics/camera.hpp>
 #include <aires/graphics/color.hpp>
 #include <aires/graphics/object.hpp>
 #include <aires/graphics/shader.hpp>
@@ -63,7 +64,7 @@ namespace Aires {
 					~GL3GraphicsObject();
 
 					void update();
-					void render();
+					void render(Camera* cam);
 				protected:
 					void loadShaders(ShaderProgram* shaderProgram);
 				private:

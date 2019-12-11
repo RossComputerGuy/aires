@@ -1,6 +1,7 @@
 #pragma once
 
 #include <aires/graphics/backend.hpp>
+#include <aires/graphics/camera.hpp>
 #include <aires/graphics/shader.hpp>
 #include <aires/graphics/vertex.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -17,7 +18,9 @@ namespace Aires {
 				std::list<unsigned int> elements;
 
 				virtual void update() = 0;
-				virtual void render() = 0;
+				virtual void render(Camera* cam) = 0;
+
+				void render();
 
 				void setShaderProgram(ShaderProgram* shaderProgram);
 				unsigned int* getElementsArray();

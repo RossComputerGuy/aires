@@ -12,6 +12,10 @@ void GraphicsObject::setShaderProgram(ShaderProgram* shaderProgram) {
 	this->loadShaders(this->shaderProgram);
 }
 
+void GraphicsObject::render() {
+	this->render(nullptr);
+}
+
 unsigned int* GraphicsObject::getElementsArray() {
 	unsigned int* elems = new unsigned int[this->elements.size()];
 	size_t i = 0;

@@ -2,6 +2,7 @@
 
 #include <aires/graphics/api.hpp>
 #include <aires/graphics/backend.hpp>
+#include <aires/graphics/camera.hpp>
 #include <aires/graphics/color.hpp>
 #include <aires/graphics/object.hpp>
 #include <aires/graphics/texture.hpp>

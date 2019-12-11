@@ -10,6 +10,7 @@ option(ENABLE_TESTING "Enable tests" ON)
 ## Dependencies
 find_package(PkgConfig)
 find_package(Threads)
+include(GNUInstallDirs)
 
 if(ENABLE_TESTING)
 	find_package(GTest)
@@ -49,8 +50,8 @@ configure_file("${PROJECT_SOURCE_DIR}/data/config.h.in" "${PROJECT_BINARY_DIR}/i
 include_directories("${PROJECT_SOURCE_DIR}/include" "${PROJECT_BINARY_DIR}/include")
 add_library(aires SHARED
 ## Graphics
-	"${PROJECT_SOURCE_DIR}/src/graphics/api.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/backend.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/object.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/texture.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/shader.cpp"
-	"${PROJECT_SOURCE_DIR}/src/graphics/window.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/vertex.cpp"
+	"${PROJECT_SOURCE_DIR}/src/graphics/api.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/backend.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/camera.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/object.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/texture.cpp"
+	"${PROJECT_SOURCE_DIR}/src/graphics/shader.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/window.cpp" "${PROJECT_SOURCE_DIR}/src/graphics/vertex.cpp"
 ## Utils
 	"${PROJECT_SOURCE_DIR}/src/utils/file.cpp"
 ## Main
