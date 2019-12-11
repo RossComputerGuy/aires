@@ -52,6 +52,7 @@ typedef GLint (*_glGetAttribLocation)(GLuint, const GLchar*);
 typedef void (*_glDrawElements)(GLenum, GLsizei, GLenum, const void*);
 typedef void (*_glBindBuffer)(GLenum, GLuint);
 typedef void (*_glBufferData)(GLenum, GLsizeiptr, const void*, GLenum);
+typedef void (*_glDrawArrays)(GLenum, GLint, GLsizei);
 
 namespace Aires {
 	namespace Graphics {
@@ -66,6 +67,9 @@ namespace Aires {
 				protected:
 					void loadShaders(ShaderProgram* shaderProgram);
 				private:
+					GLfloat* _verts;
+					GLuint* _elems;
+
 					GLuint vao;
 					GLuint vbo;
 					GLuint ebo;
