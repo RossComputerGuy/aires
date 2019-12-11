@@ -1,14 +1,14 @@
 #version 150 core
 
 in vec4 Color;
-in vec2 Texcoord;
+in vec3 Texcoord;
 
 out vec4 outColor;
 
 uniform sampler2D tex;
 
 void main() {
-	outColor = texture(tex, Texcoord);
+	outColor = texture(tex, vec2(Texcoord.x, Texcoord.y));
 }
 
 /* vim:set ft=glsl: */

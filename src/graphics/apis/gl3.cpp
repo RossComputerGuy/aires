@@ -7,6 +7,7 @@
 /** GraphicsObject **/
 using namespace Aires::Graphics::GraphicsObjects;
 using namespace Aires::Graphics::Shaders;
+using namespace Aires::Graphics::Textures;
 
 GL3GraphicsObject::GL3GraphicsObject(GraphicsBackend* backend, glm::vec3 pos) : GraphicsObject(backend, pos) {
 	_glGenVertexArrays genVertexArrays = (_glGenVertexArrays)backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glGenVertexArrays");
@@ -49,7 +50,9 @@ void GL3GraphicsObject::render(Camera* cam) {
 	bindVertexArray(this->vao);
 	bindBuffer(GL_ARRAY_BUFFER, this->vbo);
 	bindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ebo);
+	if (this->texture != NULL && this->texture != nullptr) this->texture->use();
 	if (this->shaderProgram != NULL && this->shaderProgram != nullptr) {
+		if (this->texture != NULL && this->texture != nullptr) this->shaderProgram->set("texture", (int)(reinterpret_cast<GL3Texture*>(this->texture)->getIndex()));
 		this->shaderProgram->set("transform", this->transform);
 		this->shaderProgram->set("camera", cam == nullptr ? glm::mat4(0.0f) : cam->calc());
 		this->shaderProgram->use();
@@ -81,8 +84,6 @@ void GL3GraphicsObject::loadShaders(ShaderProgram* shaderProgram) {
 }
 
 /** Texture **/
-using namespace Aires::Graphics::Textures;
-
 GL3Texture::GL3Texture(GraphicsBackend* backend, GLenum index, uint32_t width, uint32_t height, AIRES_COLOR_FORMAT format) : GL3Texture(backend, index, width, height, 0, format) {}
 
 GL3Texture::GL3Texture(GraphicsBackend* backend, GLenum index, uint32_t width, uint32_t height, uint8_t depth, AIRES_COLOR_FORMAT format) : Texture(backend, width, height, depth, format) {
@@ -114,6 +115,15 @@ void GL3Texture::upload(float* buffer) {
 	GLenum format = this->getColorFormat() == AIRES_COLOR_RGB ? GL_RGB : GL_RGBA;
 	if (this->getDepth() == 0) texImage2D(GL_TEXTURE_2D, 0, format, this->getWidth(), this->getHeight(), 0, format, GL_FLOAT, buffer);
 	else texImage3D(GL_TEXTURE_3D, 0, format, this->getWidth(), this->getHeight(), this->getDepth(), 0, format, GL_FLOAT, buffer);
+}
+
+void GL3Texture::use() {
+	_glBindTexture bindTexture = (_glBindTexture)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glBindTexture");
+	bindTexture(this->getDepth() == 0 ? GL_TEXTURE_2D : GL_TEXTURE_3D, this->id);
+}
+
+GLenum GL3Texture::getIndex() {
+	return GL_TEXTURE0 - this->index;
 }
 
 /** Shader **/

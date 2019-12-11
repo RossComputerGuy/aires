@@ -84,6 +84,9 @@ namespace Aires {
 					~GL3Texture();
 
 					void upload(float* buffer);
+					void use();
+
+					GLenum getIndex();
 				private:
 					GLuint id;
 					GLenum index;

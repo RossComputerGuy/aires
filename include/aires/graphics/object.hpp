@@ -3,6 +3,7 @@
 #include <aires/graphics/backend.hpp>
 #include <aires/graphics/camera.hpp>
 #include <aires/graphics/shader.hpp>
+#include <aires/graphics/texture.hpp>
 #include <aires/graphics/vertex.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <list>
@@ -16,6 +17,7 @@ namespace Aires {
 				glm::mat4 transform;
 				std::list<Vertex> vertices;
 				std::list<unsigned int> elements;
+				Texture* texture = nullptr;
 
 				virtual void update() = 0;
 				virtual void render(Camera* cam) = 0;
