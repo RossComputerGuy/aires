@@ -3,9 +3,11 @@
 in vec3 position;
 in vec4 color;
 
-out vec4 vert_color;
+out vec4 Color;
+
+uniform mat4 transform;
 
 void main() {
-	vert_color = color;
-	gl_Position = vec4(position, 1.0);
+	Color = color;
+	gl_Position = (transform * vec4(position, 1.0));
 }

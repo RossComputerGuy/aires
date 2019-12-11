@@ -1,8 +1,8 @@
 #version 150 core
 
-in vec4 vert_color;
+in vec4 Color;
 out vec4 outColor;
 
 void main() {
-	outColor = vert_color;
+	outColor = Color;
 }

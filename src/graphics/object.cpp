@@ -4,7 +4,7 @@ using namespace Aires::Graphics;
 
 GraphicsObject::GraphicsObject(GraphicsBackend* backend, glm::vec3 pos) {
 	this->backend = backend;
-	this->pos = pos;
+	this->transform = glm::translate(glm::mat4(0.0f), pos);
 }
 
 void GraphicsObject::setShaderProgram(ShaderProgram* shaderProgram) {
@@ -24,7 +24,6 @@ float* GraphicsObject::getVerticesArray() {
 	size_t i = 0;
 	for (auto it = this->vertices.begin(); it != this->vertices.end(); it++) {
 		Vertex vert = (*it).clone();
-		vert.pos += this->pos;
 		float* a = vert.array();
 		for (size_t x = 0; x < 10; x++) elems[i++] = a[x];
 	}

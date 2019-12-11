@@ -3,6 +3,7 @@
 #include <aires/graphics/backend.hpp>
 #include <aires/graphics/shader.hpp>
 #include <aires/graphics/vertex.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <list>
 
 namespace Aires {
@@ -11,7 +12,7 @@ namespace Aires {
 			public:
 				GraphicsObject(GraphicsBackend* backend, glm::vec3 pos);
 
-				glm::vec3 pos;
+				glm::mat4 transform;
 				std::list<Vertex> vertices;
 				std::list<unsigned int> elements;
 

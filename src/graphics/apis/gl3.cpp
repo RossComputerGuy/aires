@@ -29,7 +29,9 @@ GL3GraphicsObject::~GL3GraphicsObject() {
 void GL3GraphicsObject::update() {
 	_glBindBuffer bindBuffer = (_glBindBuffer)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glBindBuffer");
 	_glBufferData bufferData = (_glBufferData)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glBufferData");
+	_glBindVertexArray bindVertexArray = (_glBindVertexArray)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glBindVertexArray");
 
+	bindVertexArray(this->vao);
 	this->_verts = this->getVerticesArray();
 	bindBuffer(GL_ARRAY_BUFFER, this->vbo);
 	bufferData(GL_ARRAY_BUFFER, this->vertices.size(), this->_verts, GL_STATIC_DRAW);
@@ -37,17 +39,20 @@ void GL3GraphicsObject::update() {
 	this->_elems = this->getElementsArray();
 	bindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ebo);
 	bufferData(GL_ELEMENT_ARRAY_BUFFER, this->elements.size(), this->_elems, GL_STATIC_DRAW);
+
+	if (this->shaderProgram != NULL && this->shaderProgram != nullptr) this->shaderProgram->set("transform", this->transform);
 }
 
 void GL3GraphicsObject::render() {
 	_glBindBuffer bindBuffer = (_glBindBuffer)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glBindBuffer");
-	_glDrawArrays drawArrays = (_glDrawArrays)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glDrawArrays");
 	_glDrawElements drawElements = (_glDrawElements)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glDrawElements");
+	_glBindVertexArray bindVertexArray = (_glBindVertexArray)this->backend->getAPIFunction(AIRES_GRAPHICS_API_GL3, "glBindVertexArray");
 
+	bindVertexArray(this->vao);
 	bindBuffer(GL_ARRAY_BUFFER, this->vbo);
 	bindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ebo);
 	if (this->shaderProgram != NULL && this->shaderProgram != nullptr) this->shaderProgram->use();
-	drawArrays(GL_TRIANGLES, 0, this->elements.size());
+	drawElements(GL_TRIANGLES, this->elements.size(), GL_UNSIGNED_INT, 0);
 }
 
 void GL3GraphicsObject::loadShaders(ShaderProgram* shaderProgram) {
